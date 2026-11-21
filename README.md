@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-# Asphalt Pathology Detection – FastAPI Demo
-
-Upload a road photo or video, get detections, severity, a recommended action with timeline, and an HTML engineering report.
-
-## 1. Setup
-```bash
-cd asphalt-fastapi-demo
-=======
 # Visionary AI: Asphalt Pathology Detection
 
 AI-powered road inspection from a single photo or video. The system detects asphalt pathologies with a YOLO model, retrieves engineering knowledge for each defect, and generates a civil engineering inspection report with severity, priority, recommended repair and action timeframe.
@@ -85,63 +76,11 @@ git clone https://github.com/AmirAziz1221/VISIONARY_AI.git
 cd VISIONARY_AI
 git lfs pull            # downloads the model weights
 
->>>>>>> bab4e9d3d2ef7f535a8bb9b248a8aeba69d9355b
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-<<<<<<< HEAD
-## 2. Add your model
-Copy your trained weights into `models/` and name it `best.pt`:
-```
-models/best.pt        (your "asphalts pathologies detection.pt")
-```
-Or keep the original name and set it: `export MODEL_PATH="models/asphalts pathologies detection.pt"`
-(Windows PowerShell: `$env:MODEL_PATH="models/asphalts pathologies detection.pt"`).
-
-## 3. Run
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-- Demo UI: http://localhost:8000
-- API docs (Swagger): http://localhost:8000/docs
-- Health and class names: http://localhost:8000/health  (check your classes load here first)
-
-## 4. Test from the command line
-```bash
-curl -X POST http://localhost:8000/predict/image -F "file=@road.jpg" -F "conf=0.25"
-curl -X POST http://localhost:8000/predict/video -F "file=@road.mp4" -F "frame_stride=5"
-```
-
-## Endpoints
-| Method | Path | Purpose |
-|---|---|---|
-| POST | /predict/image | Image in, detections + annotated image + report |
-| POST | /predict/video | Video in, sampled frames analysed, worst frames + annotated video + report |
-| GET | /report/{id} | HTML engineering report |
-| GET | /video/{id} | Download annotated video |
-| GET | /health | Model status and class names |
-
-## Tuning for your model
-- **Severity** is a heuristic in `app/report.py` (`severity_of`): keywords such as "slide" or "washout" become Critical; otherwise box size relative to the frame sets Low, Medium or High. Edit the keywords to match your class names.
-- **Timelines** (24 hours, 7 days, 30 days) are in `ACTIONS` in the same file. Change them to the targets you present.
-- `frame_stride` (default 5) controls speed. Use a larger value on a CPU.
-- Video counts are per sampled frame, so one pothole seen in several frames is counted several times. Add tracking (`model.track`) if you need unique defect counts.
-- Reports are kept in memory and disappear on restart.
-
-## Docker (optional)
-```bash
-docker build -t asphalt-demo .
-docker run -p 8000:8000 asphalt-demo
-```
-Put `models/best.pt` in place before building.
-
-## Troubleshooting
-- `model_missing` on /health: the .pt file path is wrong.
-- Slow video: raise `frame_stride`, or lower `IMGSZ` (env var, default 640).
-- Annotated video will not play in the browser: it uses the mp4v codec, so download it and open it in VLC.
-=======
 ## Usage
 
 ```bash
@@ -200,4 +139,3 @@ This project provides AI-assisted screening for preliminary engineering support 
 [LinkedIn](https://www.linkedin.com/in/amir-aziz-2868aa266) · [GitHub](https://github.com/AmirAziz1221)
 
 > *Build Local. Solve Real. Scale Responsibly.*
->>>>>>> bab4e9d3d2ef7f535a8bb9b248a8aeba69d9355b
