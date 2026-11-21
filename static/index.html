@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road Pathology Detection</title>
+<style>
+body{font-family:Arial,sans-serif;background:#14181F;color:#F3EFE6;margin:0}
+main{max-width:960px;margin:0 auto;padding:24px}
+h1{color:#F2A33A}.card{background:#222A35;border-radius:12px;padding:20px;margin:16px 0}
+button{background:#F2A33A;border:0;padding:12px 22px;border-radius:8px;font-weight:700;cursor:pointer}
+input,select{margin:6px 0}img{width:100%;border-radius:8px;margin:8px 0}a{color:#F2A33A}
+table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid #3a4452;text-align:left}
+.p{font-size:22px;font-weight:700;color:#F2A33A}
+</style></head><body><main>
+<h1>Road Pathology Detection</h1>
+<p>Upload a road photo or video. The AI detects pathologies and generates an engineering report.</p>
+<div class="card">
+<input type="file" id="f" accept="image/*,video/*"><br>
+Confidence: <input type="range" id="c" min="0.1" max="0.9" step="0.05" value="0.25"> <span id="cv">0.25</span><br>
+Latitude <input id="lat" size="9"> Longitude <input id="lon" size="9"> (optional)<br><br>
+<button onclick="run()">Analyse</button> <span id="s"></span>
+</div>
+<div id="out"></div>
+<script>
+const c=document.getElementById('c');c.oninput=()=>cv.textContent=c.value;
+async function run(){
+ const file=f.files[0]; if(!file){s.textContent='Choose a file first.';return;}
+ const isVid=file.type.startsWith('video');
+ const fd=new FormData(); fd.append('file',file); fd.append('conf',c.value);
+ if(lat.value)fd.append('lat',lat.value); if(lon.value)fd.append('lon',lon.value);
+ s.textContent='Analysing... videos can take a while.'; out.innerHTML='';
+ const r=await fetch(isVid?'/predict/video':'/predict/image',{method:'POST',body:fd});
+ const j=await r.json(); if(!r.ok){s.textContent=j.detail||'Error';return;}
+ s.textContent='Done in '+j.seconds+'s';
+ const sm=j.summary;
+ const rows=j.detections.slice(0,30).map(d=>`<tr><td>${d.class}</td><td>${d.severity}</td><td>${d.confidence}</td></tr>`).join('');
+ out.innerHTML=`<div class="card"><div class="p">Overall priority: ${sm.overall_priority}</div>
+ <p>${sm.recommended_action} · ${sm.timeline}</p>
+ <p>${sm.detections_total} detections in ${sm.frames_analysed} frame(s)</p>
+ <p><a href="${j.report_url}" target="_blank">Open full report</a>${j.video_url?` · <a href="${j.video_url}">Download annotated video</a>`:''}</p></div>
+ <div class="card">${j.images.map(b=>`<img src="data:image/jpeg;base64,${b}">`).join('')}</div>
+ <div class="card"><table><tr><th>Defect</th><th>Severity</th><th>Confidence</th></tr>${rows}</table></div>`;
+}
+</script></main></body></html>

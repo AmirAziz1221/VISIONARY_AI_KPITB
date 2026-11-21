@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+<<<<<<< HEAD
+.pytest_cache/
+=======
+.pytest_cache/
+>>>>>>> 2886d6f3d014d3e2c7894c556514314b3b1a583f
